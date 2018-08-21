@@ -2,19 +2,23 @@ function jtGetItem(obj, key) {
     var fieldData = '';
 
     if(obj[key].constructor === Array) {
+        fieldData = '[';
         for(var j = 0; j < obj[key].length; j++) {
-            if(fieldData !== '') {
-                fieldData += '<br/>';
+            if(fieldData !== '[') {
+                fieldData += ', ';
             }
             fieldData += jtGetItem(obj[key], j);
         }
+        fieldData += ']'
     } else if(obj[key].constructor === Object) {
+        fieldData = '{';
         for(var name in obj[key]) {
-            if(fieldData !== '') {
-                fieldData += '<br/>';
+            if(fieldData !== '{') {
+                fieldData += ', ';
             }
-            fieldData += '{' + name + ': ' + jtGetItem(obj[key], name) + '}';
+            fieldData +=  name + ' : ' + jtGetItem(obj[key], name);
         }
+        fieldData += '}';
     } else if(obj[key].constructor === String || obj[key].constructor === Number) {
         fieldData += obj[key];
     } else {
@@ -22,6 +26,42 @@ function jtGetItem(obj, key) {
     }
 
     return fieldData;
+}
+
+function jtParseItem(value) {
+    if(value.startsWith('{') && value.endsWith('}')) {
+        var fieldData = {};
+
+        var slicedValue = value.slice(1, -1);
+        var list_items = slicedValue.split(',');
+        for(var i = 0; i < list_items.length; i++) {
+            var key_val = list_items[i].split(' : ');
+            var data = jtParseItem(key_val[1]);
+            if(data !== '') {
+                fieldData[key_val[0]] = data;
+            }
+        }
+        return fieldData;
+    } else if(value.startsWith('[') && value.endsWith(']')) {
+        var fieldData = [];
+
+        var slicedValue = value.slice(1, -1);
+        var list_items = slicedValue.split(',');
+        for(var i = 0; i < list_items.length; i++) {
+            var data = jtParseItem(list_items[i]);
+            if(data !== '') {
+                fieldData.push(data);
+            }
+        }
+        return fieldData
+    } else {
+        return value.trim();
+    }
+}
+
+function jtClear(tableId) {
+    var $tableBody = $("#" + tableId).find('tbody');
+    $tableBody.find('tr').remove();
 }
 
 function jtFill(tableId, jsonRawData) {
@@ -66,7 +106,6 @@ function jtRead(tableId) {
     var $tableBody = $("#" + tableId).find('tbody');
     var $tableRows = $tableBody.find('tr:not(:hidden)');
 
-    // Turn all existing rows into a loopable array
     var tableData = [];
     $tableRows.each(function () {
         var $tableTds = $(this).find('td');
@@ -74,7 +113,7 @@ function jtRead(tableId) {
         var rowData = {};
         $tableTds.each(function () {
             var filedName = $(this).attr('name');
-            var fieldValue = $(this).text();
+            var fieldValue = jtParseItem($(this).text());
 
             if(filedName !== "jtAction" && filedName !== undefined) {
                 rowData[filedName] = fieldValue;
@@ -88,16 +127,16 @@ function jtRead(tableId) {
 
 function jtDataFill(tableId, formItemName) {
     var $tableHead = $("#" + tableId).find('thead');
-    var $tableJtData = $tableHead.find('input.jtData');
+    var $tableJtData = $tableHead.find('textarea.jtData');
 
     if($tableJtData.html() === undefined) {
-        $tableHead.append('<input type="hidden" class="jtData" value=""/>');
-        $tableJtData = $tableHead.find('input.jtData');
+        $tableHead.append('<textarea style="display: none;" class="jtData"></textarea>');
+        $tableJtData = $tableHead.find('textarea.jtData');
     }
     $tableJtData.attr('name', formItemName);
 
     var jsonRawData = jtRead(tableId);
-    $tableJtData.val(jsonRawData);
+    $tableJtData.html(jsonRawData);
 }
 
 function jtAddNewLine(tableId) {
