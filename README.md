@@ -3,11 +3,17 @@
 
 ## Шаблон для использования
 ```
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="jsontable.js"></script>
 
-. . .
+<script type="text/javascript">
+    function fill() {
+        jtFill('jsonTable', '[{"type": "system", "name": "systemd"}, {"type": "system", "name": "crontab"}]');
+    }
+</script>
 
-<body onload="jtFill('jsonTable', '[{"type": "system", "name": "crontab"}, {"type": "system", "name": "systemd"}]')">
+<body onload="fill()">
     <table id="jsonTable" class="table">
         <thead>
             <tr class='header complemented removable'>
@@ -23,11 +29,17 @@
 
 ## Использование в качестве поля формы
 ```
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="jsontable.js"></script>
 
-. . .
+<script type="text/javascript">
+    function fill() {
+        jtFill('jsonTable', '[{"type": "system", "name": "systemd"}, {"type": "system", "name": "crontab"}]');
+    }
+</script>
 
-<body onload="jtFill('jsonTable', '[{"type": "system", "name": "crontab"}, {"type": "system", "name": "systemd"}]')">
+<body onload="fill()">
     <table id="jsonTable" class="table">
         <thead>
             <tr class='header complemented removable'>
@@ -46,11 +58,7 @@
 После нажатия на кнопку `Push JSON to form field` в данную таблицу добавится `<input>`, который можно использовать как поле формы для отправки запросов
 
 ```
-<script src="jsontable.js"></script>
-
-. . .
-
-<body onload="jtFill('jsonTable', '[{"type": "system", "name": "crontab"}, {"type": "system", "name": "systemd"}]')">
+<body onload="fill()">
     <table id="jsonTable" class="table">
         <thead>
             <tr class="header complemented removable">
@@ -61,16 +69,7 @@
             <input type="hidden" class="jtData" value="[{\"type\":\"system\",\"name\":\"systemd\"},{\"type\":\"system\",\"name\":\"crontab\"}]" name="my-json-field">
         </thead>
         <tbody>
-            <tr class="complemented removable">
-                <td name="type" placeholder="user">system</td>
-                <td name="name" class="editable" placeholder="Proc name" contenteditable="true">systemd</td>
-                <td class="jtAction"><span class="glyphicon glyphicon-remove" onclick="$(this).closest('tr').remove();"></span></td>
-            </tr>
-            <tr class="complemented removable">
-                <td name="type" placeholder="user">system</td>
-                <td name="name" class="editable" placeholder="Proc name" contenteditable="true">crontab</td>
-                <td class="jtAction"><span class="glyphicon glyphicon-remove" onclick="$(this).closest('tr').remove();"></span></td>
-            </tr>
+            . . .
         </tbody>
     </table>
     <button onclick="jtDataFill('jsonTable', 'my-json-field')" class="btn btn-default">Push JSON to form field</button>
